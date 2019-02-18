@@ -190,8 +190,8 @@ Completeness of a hunter's wardrobe affords the greatest aethetic flexibility.
 """
 type Bloodborne_Attire implements Node {
     id: ID!
-    name: String!
-    slot: String!
+    name: String! @unique
+    slot: Bloodborne_AttireSlot!
     set: Bloodborne_AttireSet
     pickUp: Bloodborne_Location
     badge: Bloodborne_Badge
@@ -204,12 +204,20 @@ This type exists only as a checklist, as some sets are acquired piecemeal.
 """
 type Bloodborne_AttireSet implements Node {
     id: ID!
-    name: String!
+    name: String! @unique
     headwear: Bloodborne_Attire
     garb: Bloodborne_Attire
     gloves: Bloodborne_Attire
     trousers: Bloodborne_Attire
-    requiresDLC: Boolean
+    requiresDLC: Boolean!
+}
+
+"""
+There are four slots for attire: "Headwear", "Garb", "Gloves", and "Trousers".
+"""
+type Bloodborne_AttireSlot implements Node {
+    id: ID!
+    slot: String! @unique
 }
 
 """
@@ -258,7 +266,7 @@ The Hunter's Dream is also included for consistency.
 """
 type Bloodborne_Headstone implements Node {
     id: ID!
-    name: String!
+    name: String! @unique
     lanterns: [Bloodborne_Location!] @relation(path: "Bloodborne_Headstone=headstone.Bloodborne_Location")
 }
 
@@ -282,7 +290,7 @@ Trick weapons that deal elemental damage cannot have their damage type modified 
 """
 type Bloodborne_Element implements Node {
     id: ID!
-    type: String!
+    type: String! @unique
     defaultWeapons: [Bloodborne_Weapon!] @relation(path: "Bloodborne_Element=defaultElement.Bloodborne_Weapon")
     trickedWeapons: [Bloodborne_Weapon!] @relation(path: "Bloodborne_Element=trickedElement.Bloodborne_Weapon")
     offhandWeapons: [Bloodborne_Offhand!] @relation(path: "Bloodborne_Element=element.Bloodborne_Offhand")
@@ -294,7 +302,7 @@ Most gestures exist only for entertainment, but all are included for the sake of
 """
 type Bloodborne_Gesture implements Node {
     id: ID!
-    name: String!
+    name: String! @unique
     taughtBy: Bloodborne_NPC!
 }
 
@@ -307,7 +315,7 @@ but this sequence is impossible to miss during progression and is not included.
 """
 type Bloodborne_Quest implements Node {
     id: ID!
-    name: String!
+    name: String! @unique
     steps: [Bloodborne_QuestStep!] @relation(path: "Bloodborne_Quest=quest.Bloodborne_QuestStep")
 }
 
