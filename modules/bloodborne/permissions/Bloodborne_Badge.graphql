@@ -1,0 +1,13 @@
+query Bloodborne_BadgePermission1 {
+  scope(role: ANONYMOUS, operations: [READ])
+}
+
+
+query Bloodborne_BadgePermission2 {
+  scope(role: STAFF, operations: [CREATE, UPDATE, DELETE])
+}
+
+
+query Bloodborne_BadgePermission3 {
+  scope(role: RUNTIME, operations: [CREATE, UPDATE, DELETE, READ])
+}

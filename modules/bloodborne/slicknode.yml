@@ -1,0 +1,4 @@
+module:
+  id: '@private/bloodborne'
+  label: Bloodborn
+  namespace: Bloodborne

@@ -1,0 +1,11 @@
+{
+  "default": {
+    "endpoint": "https://bloodborne-ally-9834e999.us-east1.slicknode.com",
+    "version": "UHJvamVjdFZlcnNpb246MTg4",
+    "alias": "bloodborne-ally-9834e999",
+    "consoleUrl": "https://console.slicknode.com/p/bloodborne-ally-9834e999",
+    "playgroundUrl": "https://console.slicknode.com/p/bloodborne-ally-9834e999/playground",
+    "name": "bloodborne-ally",
+    "id": "UHJvamVjdDozNw"
+  }
+}

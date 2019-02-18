@@ -1,0 +1,13 @@
+query Bloodborne_OffhandPermission1 {
+  scope(role: ANONYMOUS, operations: [READ])
+}
+
+
+query Bloodborne_OffhandPermission2 {
+  scope(role: STAFF, operations: [CREATE, UPDATE, DELETE])
+}
+
+
+query Bloodborne_OffhandPermission3 {
+  scope(role: RUNTIME, operations: [CREATE, UPDATE, DELETE, READ])
+}

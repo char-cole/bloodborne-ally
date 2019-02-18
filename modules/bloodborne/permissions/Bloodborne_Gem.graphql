@@ -1,0 +1,13 @@
+query Bloodborne_GemPermission1 {
+  scope(role: ANONYMOUS, operations: [READ])
+}
+
+
+query Bloodborne_GemPermission2 {
+  scope(role: STAFF, operations: [CREATE, UPDATE, DELETE])
+}
+
+
+query Bloodborne_GemPermission3 {
+  scope(role: RUNTIME, operations: [CREATE, UPDATE, DELETE, READ])
+}

@@ -1,0 +1,13 @@
+query Bloodborne_QuestPermission1 {
+  scope(role: ANONYMOUS, operations: [READ])
+}
+
+
+query Bloodborne_QuestPermission2 {
+  scope(role: STAFF, operations: [CREATE, UPDATE, DELETE])
+}
+
+
+query Bloodborne_QuestPermission3 {
+  scope(role: RUNTIME, operations: [CREATE, UPDATE, DELETE, READ])
+}
