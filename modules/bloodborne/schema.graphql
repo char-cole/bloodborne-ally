@@ -1,28 +1,43 @@
 """
 Any character encountered by the player during the night of the hunt. May be helpful or hostile.
 """
-type Bloodborne_NPC implements Node {
+type Bloodborne_Character implements Node {
     id: ID!
     name: String! @unique
-    initial: Bloodborne_Encounter!
-    second: Bloodborne_Encounter
-    third: Bloodborne_Encounter
+    encounters: [Bloodborne_CharacterEncounter!] @relation(path: "Bloodborne_Character=interactWith.Bloodborne_CharacterEncounter")
+    # sourceOfItems: [Bloodborne_Item!]! @relation(path: "Bloodborne_Character=source.Bloodborne_Item")
     requiresDLC: Boolean!
 }
 
 """
 A set of information about where and when an NPC can be found, as well as what may be acquired.
 """
-type Bloodborne_Encounter implements Node {
+type Bloodborne_CharacterEncounter implements Node {
     id: ID!
+    """
+    For consistency, designation should be FIRSTNAME ENCOUNTERNUMBER.
+    For example, "Eileen 1", "Eileen 2", and so on.
+    Character corpses count as interactions if lootable, but summons do not.
+    """
+    designation: String! @unique
     location: Bloodborne_Location!
+    interactWith: Bloodborne_Character
     beginsHostile: Boolean!
     givesBadge: Bloodborne_Badge
     givesAttire: Bloodborne_Attire
     givesGesture: Bloodborne_Gesture
-    killThisFirst: Bloodborne_Boss
-    doNotKillThis: Bloodborne_Boss
+    givesRune: Bloodborne_Rune
+    requiresKill: Bloodborne_Enemy
+    mustNotKill: Bloodborne_Enemy
+    """
+    Indicates whether or not the character ever appears again as an NPC (not summoned).
+    If not, it is probably safe to kill the character, although they may not have any loot left.
+    """
     isLastEncounter: Boolean!
+    """
+    Notes may contain reminders for unique requirements of certain encounters
+    """
+    notes: String
 }
 
 """
@@ -49,7 +64,17 @@ type Bloodborne_Boss implements Node {
 # As certain loot types (ie badges) may be acquired from both NPCs and bosses, these types should
 # be searchable in tandem.
 # """
-# union Bloodborne_LootableCorpse = Bloodborne_NPC | Bloodborne_Boss
+# union Bloodborne_LootableCorpse = Bloodborne_Character | Bloodborne_Boss
+
+"""
+Temporary workaround until union migration fully integrated
+"""
+type Bloodborne_Enemy implements Node {
+    id: ID!
+    name: String!
+    connectNPC: Bloodborne_Character
+    connectBoss: Bloodborne_Boss
+}
 
 """
 A trick weapon for hunting prey. Used in the main hand, and has a secondary (tricked) form.
@@ -78,15 +103,15 @@ type Bloodborne_Weapon implements Node {
     uncannyGem: [Bloodborne_Shape!] @relation(path: "Bloodborne_Weapon=weapon.Bloodborne_ShapeEdge.shape=Bloodborne_Shape")
     defaultSerrated: Boolean!
     trickedSerrated: Boolean!
-    defaultBlunt: Boolean
-    trickedBlunt: Boolean
+    defaultBlunt: Boolean!
+    trickedBlunt: Boolean!
     defaultThrust: Boolean!
     trickedThrust: Boolean!
     defaultRighteous: Boolean!
     trickedRighteous: Boolean!
     defaultElement: Bloodborne_Element
     trickedElement: Bloodborne_Element
-    requiresDLC: Boolean
+    requiresDLC: Boolean!
     """
     Notes may contain tips for finding or obtaining item, or warnings about progression
     """
@@ -117,7 +142,7 @@ type Bloodborne_Offhand implements Node {
     Certain off-hand equipment may have unique properties
     """
     special: String
-    requiresDLC: Boolean
+    requiresDLC: Boolean!
     """
     Notes may contain tips for finding or obtaining item, or warnings about progression
     """
@@ -158,7 +183,7 @@ type Bloodborne_Gem implements Node {
     effect1: String!
     effect2: String
     effect3: String
-    requiresDLC: Boolean
+    requiresDLC: Boolean!
 }
 
 
@@ -178,7 +203,7 @@ type Bloodborne_HunterTool implements Node {
     Arcane tools may have unique properties or uses
     """
     special: String
-    requiresDLC: Boolean
+    requiresDLC: Boolean!
     """
     Notes may contain tips for finding or obtaining item, or warnings about progression
     """
@@ -226,11 +251,14 @@ Caryll runes for use with the Workshop Rune Tool.
 type Bloodborne_Rune implements Node {
     id: ID!
     name: String!
-    magnitude: Int!
-    location: Bloodborne_Location
+    isCovenant: Boolean
+    tier: Int
     effect: String!
-    droppedBy: String
-    requiresDLC: Boolean
+    pickUp: Bloodborne_Location
+    # receivedFrom: Bloodborne_LootableCorpse
+    givenBy: Bloodborne_Character
+    lootedFrom: Bloodborne_Character
+    requiresDLC: Boolean!
     """
     Notes may contain tips for finding or obtaining item, or warnings about progression
     """
@@ -280,8 +308,9 @@ type Bloodborne_Badge implements Node {
     trickWeapons: [Bloodborne_Weapon!] @relation(path: "Bloodborne_Badge=badge.Bloodborne_Weapon")
     offhandWeapons: [Bloodborne_Offhand!] @relation(path: "Bloodborne_Badge=badge.Bloodborne_Offhand")
     pickUp: Bloodborne_Location
+    givenOrLooted: Bloodborne_Enemy
     # droppedBy: Bloodborne_LootableCorpse
-    requiresDLC: Boolean
+    requiresDLC: Boolean!
 }
 
 """
@@ -303,7 +332,7 @@ Most gestures exist only for entertainment, but all are included for the sake of
 type Bloodborne_Gesture implements Node {
     id: ID!
     name: String! @unique
-    taughtBy: Bloodborne_NPC!
+    givenBy: Bloodborne_Character!
 }
 
 """
@@ -319,20 +348,32 @@ type Bloodborne_Quest implements Node {
     steps: [Bloodborne_QuestStep!] @relation(path: "Bloodborne_Quest=quest.Bloodborne_QuestStep")
 }
 
+"""
+A discrete measurement of progress in a quest. Defined by the action required to progress the quest.
+Therefore, encounters which are exposed by quest progression but are not required to further
+quest progression are not connected to the node at this time.
+"""
 type Bloodborne_QuestStep implements Node {
     id: ID!
     quest: Bloodborne_Quest!
     step: Int!
     location: Bloodborne_Location!
+    encounter: Bloodborne_CharacterEncounter
     # interactWith: Bloodborne_LootableCorpse
     action: Bloodborne_Action
+    target: Bloodborne_Character
     requiredItem: String
+    # getAttire: Bloodborne_AttireUnion
     getBadge: Bloodborne_Badge
     getGesture: Bloodborne_Gesture
-    killThisFirst: Bloodborne_Boss
-    # doNotKillThis: Bloodborne_LootableCorpse
+    getRune: Bloodborne_Rune
+    requiresKill: Bloodborne_Enemy
+    mustNotKill: Bloodborne_Enemy
 }
 
+"""
+An action is any of four simple interactions with NPCs, bosses, or items.
+"""
 type Bloodborne_Action implements Node {
     id: ID!
     """
