@@ -45,15 +45,17 @@ Any prey that has a health bar and is locked inside a fog wall.
 """
 type Bloodborne_Boss implements Node {
     id: ID!
-    name: String! @unique
-    """
-    This field refers to the nearest lamp that comes before killing the boss (ie
-    the quickest route to the boss from the Hunter's Dream).
-    """
+    name: String!
     location: Bloodborne_Location!
+    """
+    This field identifies the nearest lamp to the boss's fog wall,
+    the quickest route to the boss from the Hunter's Dream.
+    """
+    quickestRoute: Bloodborne_Location
     mandatory: Boolean!
     isBeast: Boolean!
     isKin: Boolean!
+    # dropsLoot: Bloodborne_LootUnion
     """
     Notes may contain warnings about boss types or progression.
     """
@@ -275,6 +277,7 @@ type Bloodborne_Location implements Node {
     id: ID!
     name: String! @unique
     headstone: Bloodborne_Headstone!
+    boss: [Bloodborne_Boss!]! @relation(path: "Bloodborne_Location=location.Bloodborne_Boss")
     """
     Most locations can only be accessed after certain events.
     This field denotes the earliest possible route to the lantern.
@@ -296,6 +299,7 @@ type Bloodborne_Headstone implements Node {
     id: ID!
     name: String! @unique
     lanterns: [Bloodborne_Location!] @relation(path: "Bloodborne_Headstone=headstone.Bloodborne_Location")
+    bosses: [Bloodborne_Boss!] @relation(path: "Bloodborne_Headstone=headstone.Bloodborne_Location.boss=Bloodborne_Boss")
 }
 
 
