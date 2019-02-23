@@ -15,9 +15,9 @@ A set of information about where and when an NPC can be found, as well as what m
 type Bloodborne_CharacterEncounter implements Node {
     id: ID!
     """
-    For consistency, designation should be Firstname EncounterNumber.
+    For consistency, designation should be FIRSTNAME ENCOUNTERNUMBER.
     For example, "Eileen 1", "Eileen 2", and so on.
-    Character corpses count as encounters if lootable, but summons do not.
+    Character corpses count as interactions if lootable, but summons do not.
     """
     designation: String! @unique
     location: Bloodborne_Location!
@@ -73,14 +73,15 @@ type Bloodborne_Boss implements Node {
 # union Bloodborne_LootableCorpse = Bloodborne_Character | Bloodborne_Boss
 
 """
-Each Boss or Character must have a corresponding Enemy created and connected for other types
-to be able to connect. Name of Enemy should be identical to corresponding Boss or Character.
+Currently, each Character and Boss added to the database must also be created as an Enemy
+in order to connect other types reliably. Will eventually be deprecated when unions
+are fully implemented.
 """
 type Bloodborne_Enemy implements Node {
     id: ID!
-    name: String! @unique
-    connectNPC: Bloodborne_Character @unique
-    connectBoss: Bloodborne_Boss @unique
+    name: String!
+    connectNPC: Bloodborne_Character
+    connectBoss: Bloodborne_Boss
 }
 
 """
@@ -104,7 +105,9 @@ type Bloodborne_Weapon implements Node {
     Optionally, glyphs may be recorded for easily obtaining alternate versions (online only)
     """
     uncannyGlyph: String
-    imprints: [Bloodborne_Imprint!]! @relation(path: "Bloodborne_Weapon=weapon.Bloodborne_Imprint")
+    normalImprint: Bloodborne_Imprint!
+    lostImprint: Bloodborne_Imprint!
+    uncannyImprint: Bloodborne_Imprint!
     defaultSerrated: Boolean!
     trickedSerrated: Boolean!
     defaultBlunt: Boolean!
@@ -121,6 +124,7 @@ type Bloodborne_Weapon implements Node {
     """
     notes: String
 }
+
 
 """
 Off-hand equipment is usually firearms, but some are specialized and cannot parry.
@@ -169,18 +173,19 @@ All trick weapons are "Normal", "Lost", or "Uncanny".
 """
 type Bloodborne_WeaponVersion implements Node {
     id: ID!
-    name: String! @unique
+    name: String!
 }
 
 """
-The shape of a gem determines which weapons it can be used in and influences its properties.
+The shape of a gem determines which weapons it can be used in.
 """
 type Bloodborne_Shape implements Node {
     id: ID!
     """
-    Only gems of shape 'Triangle', 'Waning', 'Circle', or 'Droplet' are recorded.
+    Currently, only gems of shape 'Triangle', 'Waning', 'Circle', or 'Droplet' are recorded.
     """
     shape: String! @unique
+    name: String @unique
 }
 
 """
@@ -190,7 +195,7 @@ type Bloodborne_Gem implements Node {
     id: ID!
     name: String!
     """
-    Only gems of shape 'Triangle', 'Waning', 'Circle', or 'Droplet' are recorded
+    Currently, only gems of shape 'Triangle', 'Waning', 'Circle', or 'Droplet' are recorded.
     """
     shape: Bloodborne_Shape!
     effect1: String!
@@ -269,7 +274,7 @@ type Bloodborne_Rune implements Node {
     effect: String!
     pickUp: Bloodborne_Location
     # receivedFrom: Bloodborne_LootableCorpse
-    givenOrLooted: Bloodborne_Enemy
+    givenBy: Bloodborne_Enemy
     requiresDLC: Boolean!
     """
     Notes may contain tips for finding or obtaining item, or warnings about progression
@@ -287,7 +292,7 @@ type Bloodborne_Location implements Node {
     id: ID!
     name: String! @unique
     headstone: Bloodborne_Headstone!
-    boss: [Bloodborne_Boss!]! @relation(path: "Bloodborne_Location=location.Bloodborne_Boss")
+    # boss: [Bloodborne_Boss!]! @relation(path: "Bloodborne_Location=location.Bloodborne_Boss")
     """
     Most locations can only be accessed after certain events.
     This field denotes the earliest possible route to the lantern.
@@ -309,6 +314,7 @@ type Bloodborne_Headstone implements Node {
     id: ID!
     name: String! @unique
     lanterns: [Bloodborne_Location!] @relation(path: "Bloodborne_Headstone=headstone.Bloodborne_Location")
+    bosses: [Bloodborne_Boss!] @relation(path: "Bloodborne_Headstone=headstone.Bloodborne_Location.boss=Bloodborne_Boss")
 }
 
 

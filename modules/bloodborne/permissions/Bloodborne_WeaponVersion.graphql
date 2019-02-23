@@ -1,13 +1,13 @@
-query Bloodborne_ShapeEdgePermission1 {
+query Bloodborne_WeaponVersionPermission1 {
   scope(role: ANONYMOUS, operations: [READ])
 }
 
 
-query Bloodborne_ShapeEdgePermission2 {
+query Bloodborne_WeaponVersionPermission2 {
   scope(role: STAFF, operations: [CREATE, UPDATE, DELETE])
 }
 
 
-query Bloodborne_ShapeEdgePermission3 {
+query Bloodborne_WeaponVersionPermission3 {
   scope(role: RUNTIME, operations: [CREATE, UPDATE, DELETE, READ])
 }
