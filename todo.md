@@ -1,14 +1,22 @@
-most    Character
-most    Character Encounter
-some    Boss                    Chalice Dungeon, DLC
-most    Enemy
-most    Weapon
-most    Offhand
-all     Gem
-most    Hunter Tool
-most    Attire
-most    Attire Set
-most    Rune
-most    Gesture
-most    Quest
-most    Quest Step
+10/x    Character
+7/x     Character Encounter
+31/x    Boss                    Chalice Dungeon, DLC
+16/x    Enemy
+26/26   Weapon
+16/16   Offhand
+78/78   Imprint
+3/3     Weapon Version
+5/5     Shape
+0/x     Gem
+12/12   Hunter Tool
+2/x     Attire
+1/x     Attire Set
+4/4     Attire Slot
+5/x     Rune
+76/76   Location
+16/16   Headstone
+11/11   Badge
+4/4     Element
+5/x     Gesture
+1/x     Quest
+5/x     Quest Step

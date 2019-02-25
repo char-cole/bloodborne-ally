@@ -157,6 +157,11 @@ A unique combination of blood gem shapes, tied to a specific version of a specif
 """
 type Bloodborne_Imprint implements Node {
     id: ID!
+    """
+    This field exists for visual sorting in the database and should not be used in queries.
+    The format is Version Weapon (for example, Uncanny Kos Parasite).
+    """
+    name: String! @unique
     weapon: Bloodborne_Weapon!
     version: Bloodborne_WeaponVersion!
     shape1: Bloodborne_Shape!
@@ -279,9 +284,7 @@ type Bloodborne_Rune implements Node {
 
 
 """
-The name of the nearest lantern to item unless item can be reached
-before reaching that lantern. Thus the location refers to the
-earliest possible route to item.
+The name of a particular lamp as given in-game.
 """
 type Bloodborne_Location implements Node {
     id: ID!
@@ -301,7 +304,7 @@ type Bloodborne_Location implements Node {
 }
 
 """
-Headstones include chalice dungeons and are organized as they are in-game,
+Headstones include chalice dungeons and are organized exactly as they are in-game,
 such that each is a unique collection of unique lanterns.
 The Hunter's Dream is also included for consistency.
 """
@@ -313,7 +316,8 @@ type Bloodborne_Headstone implements Node {
 
 
 """
-Required for purchasing certain weapons. May be found or looted from corpses.
+Required for purchasing certain weapons, attire, or other items.
+May be found, gifted, or looted from corpses.
 """
 type Bloodborne_Badge implements Node {
     id: ID!
@@ -328,7 +332,8 @@ type Bloodborne_Badge implements Node {
 
 """
 Some trick weapons, all off-hand weapons, and most tools deal "elemental" (non-physical) damage.
-Trick weapons that deal elemental damage cannot have their damage type modified by items such as Fire Paper.
+Trick weapons that deal elemental damage cannot have their damage type modified by
+items such as Fire Paper.
 """
 type Bloodborne_Element implements Node {
     id: ID!
