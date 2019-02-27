@@ -1,13 +1,13 @@
-query Bloodborne_EnemyPermission1 {
+query Bloodborne_LootSourcePermission1 {
   scope(role: ANONYMOUS, operations: [READ])
 }
 
 
-query Bloodborne_EnemyPermission2 {
+query Bloodborne_LootSourcePermission2 {
   scope(role: STAFF, operations: [CREATE, UPDATE, DELETE])
 }
 
 
-query Bloodborne_EnemyPermission3 {
+query Bloodborne_LootSourcePermission3 {
   scope(role: RUNTIME, operations: [CREATE, UPDATE, DELETE, READ])
 }

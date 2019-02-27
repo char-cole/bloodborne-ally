@@ -1,16 +1,16 @@
-10/x    Character
+10/26   Character
 7/x     Character Encounter
-31/53   Boss                    Chalice Dungeon, DLC
-16/x    Enemy
+53/53   Boss
+16/63   Loot Source
 26/26   Weapon
 16/16   Offhand
 78/78   Imprint
 3/3     Weapon Version
 5/5     Shape
-0/x     Gem
+0/37    Gem
 12/12   Hunter Tool
 2/159   Attire
-1/x     Attire Set
+34/34   Attire Set
 4/4     Attire Slot
 5/70    Rune
 76/76   Location
@@ -20,3 +20,4 @@
 5/23    Gesture
 1/x     Quest
 5/x     Quest Step
+4/4     Phase

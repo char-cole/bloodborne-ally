@@ -27,8 +27,9 @@ type Bloodborne_CharacterEncounter implements Node {
     givesAttire: Bloodborne_Attire
     givesGesture: Bloodborne_Gesture
     givesRune: Bloodborne_Rune
-    requiresKill: Bloodborne_Enemy
-    mustNotKill: Bloodborne_Enemy
+    # givesKeyItem: Bloodborne_KeyItem
+    requiresDeathOf: Bloodborne_LootSource
+    doNotKillThisYet: Bloodborne_LootSource
     """
     Indicates whether or not the character ever appears again as an NPC (not summoned).
     If not, it is probably safe to kill the character, although they may not have any loot left.
@@ -60,6 +61,9 @@ type Bloodborne_Boss implements Node {
     givesAttire: Bloodborne_Attire
     givesGesture: Bloodborne_Gesture
     givesRune: Bloodborne_Rune
+    givesWeapon: Bloodborne_Weapon
+    connectLootSource: Bloodborne_LootSource
+    # givesKeyItem: Bloodborne_KeyItem
     """
     Notes may contain warnings about boss types or progression.
     """
@@ -73,14 +77,15 @@ type Bloodborne_Boss implements Node {
 # union Bloodborne_LootableCorpse = Bloodborne_Character | Bloodborne_Boss
 
 """
-Each Boss or Character must have a corresponding Enemy created and connected for other types
-to be able to connect. Name of Enemy should be identical to corresponding Boss or Character.
+Must be connected to either a single Character of identical name or each boss of
+identical name. Allows other types to designate either NPCs or bosses as being
+sources of loot. May be deprecated when unions are supported.
 """
-type Bloodborne_Enemy implements Node {
+type Bloodborne_LootSource implements Node {
     id: ID!
     name: String! @unique
-    connectNPC: Bloodborne_Character @unique
-    connectBoss: Bloodborne_Boss @unique
+    connectCharacter: Bloodborne_Character @unique
+    connectBoss: [Bloodborne_Boss!]! @relation(path: "Bloodborne_LootSource=connectLootSource.Bloodborne_Boss")
 }
 
 """
@@ -198,9 +203,11 @@ type Bloodborne_Gem implements Node {
     Only gems of shape 'Triangle', 'Waning', 'Circle', or 'Droplet' are recorded
     """
     shape: Bloodborne_Shape!
+    rating: Int!
     effect1: String!
     effect2: String
     effect3: String
+    location: Bloodborne_Location
     requiresDLC: Boolean!
 }
 
@@ -248,11 +255,7 @@ This type exists only as a checklist, as some sets are acquired piecemeal.
 type Bloodborne_AttireSet implements Node {
     id: ID!
     name: String! @unique
-    headwear: Bloodborne_Attire
-    garb: Bloodborne_Attire
-    gloves: Bloodborne_Attire
-    trousers: Bloodborne_Attire
-    requiresDLC: Boolean!
+    pieces: [Bloodborne_Attire!]! @relation(path: "Bloodborne_AttireSet=set.Bloodborne_Attire")
 }
 
 """
@@ -274,7 +277,7 @@ type Bloodborne_Rune implements Node {
     effect: String!
     pickUp: Bloodborne_Location
     # receivedFrom: Bloodborne_LootableCorpse
-    givenOrLooted: Bloodborne_Enemy
+    source: Bloodborne_LootSource
     requiresDLC: Boolean!
     """
     Notes may contain tips for finding or obtaining item, or warnings about progression
@@ -296,7 +299,6 @@ type Bloodborne_Location implements Node {
     This field denotes the earliest possible route to the lantern.
     """
     unlock: String
-    requiresDLC: Boolean
     """
     Notes may contain tips for finding or obtaining item, or warnings about progression
     """
@@ -325,7 +327,7 @@ type Bloodborne_Badge implements Node {
     trickWeapons: [Bloodborne_Weapon!] @relation(path: "Bloodborne_Badge=badge.Bloodborne_Weapon")
     offhandWeapons: [Bloodborne_Offhand!] @relation(path: "Bloodborne_Badge=badge.Bloodborne_Offhand")
     pickUp: Bloodborne_Location
-    givenOrLooted: Bloodborne_Enemy
+    source: Bloodborne_LootSource
     # droppedBy: Bloodborne_LootableCorpse
     requiresDLC: Boolean!
 }
@@ -385,8 +387,9 @@ type Bloodborne_QuestStep implements Node {
     getBadge: Bloodborne_Badge
     getGesture: Bloodborne_Gesture
     getRune: Bloodborne_Rune
-    requiresKill: Bloodborne_Enemy
-    mustNotKill: Bloodborne_Enemy
+    requiresDeathOf: Bloodborne_LootSource
+    doNotKillThisYet: Bloodborne_LootSource
+    terminalPhase: Bloodborne_Phase
 }
 
 """
@@ -400,4 +403,15 @@ type Bloodborne_Action implements Node {
     (for already-acquired item desired by an NPC).
     """
     action: String!
+}
+
+"""
+An irreversible change in the state of the game world, during which
+certain events, characters, and enemies are altered.
+The phases are "Day", "Night", "Blood Moon", and "End of the Dream".
+"""
+type Bloodborne_Phase implements Node {
+    id: ID!
+    name: String!
+    terminatesQuestSteps: [Bloodborne_QuestStep!]! @relation(path: "Bloodborne_Phase=terminalPhase.Bloodborne_QuestStep")
 }
