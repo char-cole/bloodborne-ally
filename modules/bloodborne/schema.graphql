@@ -244,7 +244,7 @@ type Bloodborne_Attire implements Node {
     slot: Bloodborne_AttireSlot!
     set: Bloodborne_AttireSet
     pickUp: Bloodborne_Location
-    badge: Bloodborne_Badge
+    droppedBy: Bloodborne_LootSource
     requiresDLC: Boolean!
 }
 
@@ -255,6 +255,8 @@ This type exists only as a checklist, as some sets are acquired piecemeal.
 type Bloodborne_AttireSet implements Node {
     id: ID!
     name: String! @unique
+    badge: Bloodborne_Badge
+    requiresKill: Bloodborne_LootSource
     pieces: [Bloodborne_Attire!]! @relation(path: "Bloodborne_AttireSet=set.Bloodborne_Attire")
 }
 

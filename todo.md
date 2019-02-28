@@ -1,7 +1,7 @@
-10/26   Character
+13/26   Character
 7/x     Character Encounter
 53/53   Boss
-16/63   Loot Source
+51/63   Loot Source
 26/26   Weapon
 16/16   Offhand
 78/78   Imprint
@@ -9,7 +9,7 @@
 5/5     Shape
 0/37    Gem
 12/12   Hunter Tool
-2/159   Attire
+34/159  Attire
 34/34   Attire Set
 4/4     Attire Slot
 5/70    Rune
