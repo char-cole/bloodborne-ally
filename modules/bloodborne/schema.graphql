@@ -1,83 +1,120 @@
+
+# CATEGORY: ITEM
+# these Types are loot, and facilitating acquisition of them is the purpose of this API.
+
 """
-Any character encountered by the player during the night of the hunt. May be helpful or hostile.
+Completeness of a hunter's wardrobe affords the greatest aethetic flexibility.
 """
-type Bloodborne_Character implements Node {
+type Bloodborne_Attire implements Node {
     id: ID!
     name: String! @unique
-    encounters: [Bloodborne_CharacterEncounter!] @relation(path: "Bloodborne_Character=interactWith.Bloodborne_CharacterEncounter")
+    slot: Bloodborne_AttireSlot!
+    set: Bloodborne_AttireSet
+    pickUp: Bloodborne_Location
+    droppedBy: Bloodborne_LootSource
     requiresDLC: Boolean!
 }
 
 """
-A set of information about where and when an NPC can be found, as well as what may be acquired.
+Required for purchasing certain weapons, attire, or other items.
+May be found, gifted, or looted from corpses.
 """
-type Bloodborne_CharacterEncounter implements Node {
-    id: ID!
-    """
-    For consistency, designation should be Firstname EncounterNumber.
-    For example, "Eileen 1", "Eileen 2", and so on.
-    Character corpses count as encounters if lootable, but summons do not.
-    """
-    designation: String! @unique
-    location: Bloodborne_Location!
-    interactWith: Bloodborne_Character
-    beginsHostile: Boolean!
-    givesBadge: Bloodborne_Badge
-    givesAttire: Bloodborne_Attire
-    givesGesture: Bloodborne_Gesture
-    givesRune: Bloodborne_Rune
-    givesKeyItem: Bloodborne_KeyItem
-    requiresDeathOf: Bloodborne_LootSource
-    doNotKillThisYet: Bloodborne_LootSource
-    """
-    Indicates whether or not the character ever appears again as an NPC (not summoned).
-    If not, it is probably safe to kill the character, although they may not have any loot left.
-    """
-    isLastEncounter: Boolean!
-    """
-    Notes may contain reminders for unique requirements of certain encounters
-    """
-    notes: String
-}
-
-"""
-Any prey that has a health bar and is locked inside a fog wall.
-"""
-type Bloodborne_Boss implements Node {
-    id: ID!
-    name: String!
-    location: Bloodborne_Location!
-    """
-    This field identifies the nearest lamp to the boss's fog wall,
-    the quickest route to the boss from the Hunter's Dream.
-    """
-    quickestRoute: Bloodborne_Location
-    mandatory: Boolean!
-    isBeast: Boolean!
-    isKin: Boolean!
-    givesBadge: Bloodborne_Badge
-    givesAttire: Bloodborne_Attire
-    givesGesture: Bloodborne_Gesture
-    givesRune: Bloodborne_Rune
-    givesWeapon: Bloodborne_Weapon
-    givesKeyItem: Bloodborne_KeyItem
-    connectLootSource: Bloodborne_LootSource
-    """
-    Notes may contain warnings about boss types or progression.
-    """
-    notes: String
-}
-
-"""
-Must be connected to either a single Character of identical name or each boss of
-identical name. Allows other types to designate either NPCs or bosses as being
-sources of loot. May be deprecated when unions are supported.
-"""
-type Bloodborne_LootSource implements Node {
+type Bloodborne_Badge implements Node {
     id: ID!
     name: String! @unique
-    connectCharacter: Bloodborne_Character @unique
-    connectBoss: [Bloodborne_Boss!]! @relation(path: "Bloodborne_LootSource=connectLootSource.Bloodborne_Boss")
+    trickWeapons: [Bloodborne_Weapon!] @relation(path: "Bloodborne_Badge=badge.Bloodborne_Weapon")
+    offhandWeapons: [Bloodborne_Offhand!] @relation(path: "Bloodborne_Badge=badge.Bloodborne_Offhand")
+    pickUp: Bloodborne_Location
+    source: Bloodborne_LootSource
+    requiresDLC: Boolean!
+}
+
+"""
+Most gestures exist only for entertainment, but all are included for the sake of completion.
+"""
+type Bloodborne_Gesture implements Node {
+    id: ID!
+    name: String! @unique
+    givenBy: Bloodborne_Character!
+}
+
+"""
+An arcane hunter tool used in the hunt.
+"""
+type Bloodborne_HunterTool implements Node {
+    id: ID!
+    name: String! @unique
+    arcane: Int!
+    location: Bloodborne_Location!
+    quicksilverCost: Int!
+    damageType: Bloodborne_Element
+    """
+    Arcane tools may have unique properties or uses
+    """
+    special: String
+    requiresDLC: Boolean!
+    """
+    Notes may contain tips for finding or obtaining item, or warnings about progression
+    """
+    notes: String
+}
+
+"""
+Any non-badge item required for a quest step or to acquire loot.
+"""
+type Bloodborne_KeyItem implements Node {
+    id: ID!
+    name: String! @unique
+    pickUp: Bloodborne_Location
+    source: Bloodborne_LootSource
+}
+
+"""
+Off-hand equipment is usually firearms, but some are specialized and cannot parry.
+"""
+type Bloodborne_Offhand implements Node {
+    id: ID!
+    name: String! @unique
+    strength: Int!
+    skill: Int!
+    bloodtinge: Int!
+    arcane: Int!
+    location: Bloodborne_Location
+    badge: Bloodborne_Badge
+    """
+    An entry of Null indicates that an off-hand weapon either deals physical damage or no damage.
+    """
+    element: Bloodborne_Element
+    imprint: Bloodborne_Shape
+    quicksilverCost: Int
+    canParry: Boolean!
+    """
+    Certain off-hand equipment may have unique properties
+    """
+    special: String
+    requiresDLC: Boolean!
+    """
+    Notes may contain tips for finding or obtaining item, or warnings about progression
+    """
+    notes: String
+}
+
+"""
+Caryll runes for use with the Workshop Rune Tool.
+"""
+type Bloodborne_Rune implements Node {
+    id: ID!
+    name: String! @unique
+    isCovenant: Boolean
+    tier: Int
+    effect: String!
+    pickUp: Bloodborne_Location
+    source: Bloodborne_LootSource
+    requiresDLC: Boolean!
+    """
+    Notes may contain tips for finding or obtaining item, or warnings about progression
+    """
+    notes: String
 }
 
 """
@@ -119,144 +156,97 @@ type Bloodborne_Weapon implements Node {
     notes: String
 }
 
-"""
-Off-hand equipment is usually firearms, but some are specialized and cannot parry.
-"""
-type Bloodborne_Offhand implements Node {
-    id: ID!
-    name: String! @unique
-    strength: Int!
-    skill: Int!
-    bloodtinge: Int!
-    arcane: Int!
-    location: Bloodborne_Location
-    badge: Bloodborne_Badge
-    """
-    An entry of Null indicates that an off-hand weapon either deals physical damage or no damage.
-    """
-    element: Bloodborne_Element
-    imprint: Bloodborne_Shape
-    quicksilverCost: Int
-    canParry: Boolean!
-    """
-    Certain off-hand equipment may have unique properties
-    """
-    special: String
-    requiresDLC: Boolean!
-    """
-    Notes may contain tips for finding or obtaining item, or warnings about progression
-    """
-    notes: String
-}
+# CATEGORY: NPC
+# these Types are named actors in the world; in general, these Types can be killed.
 
 """
-A unique combination of blood gem shapes, tied to a specific version of a specific weapon.
+This is a specific instance of a given boss enemy. Each appearance of a boss is a unique entry in
+this Type, and all instances of this Type that share a name should be connected to a common
+Loot Source of the same name.
 """
-type Bloodborne_Imprint implements Node {
+type Bloodborne_Boss implements Node {
     id: ID!
-    """
-    This field exists for visual sorting in the database and should not be used in queries.
-    The format is Version Weapon (for example, Uncanny Kos Parasite).
-    """
-    name: String! @unique
-    weapon: Bloodborne_Weapon!
-    version: Bloodborne_WeaponVersion!
-    shape1: Bloodborne_Shape!
-    shape2: Bloodborne_Shape!
-    shape3: Bloodborne_Shape!
-}
-
-"""
-All trick weapons are "Normal", "Lost", or "Uncanny".
-"""
-type Bloodborne_WeaponVersion implements Node {
-    id: ID!
-    name: String! @unique
-}
-
-"""
-The shape of a gem determines which weapons it can be used in and influences its properties.
-"""
-type Bloodborne_Shape implements Node {
-    id: ID!
-    """
-    Only gems of shape 'Triangle', 'Waning', 'Circle', or 'Droplet' are recorded.
-    """
-    shape: String! @unique
-}
-
-"""
-An arcane hunter tool used in the hunt.
-"""
-type Bloodborne_HunterTool implements Node {
-    id: ID!
-    name: String! @unique
-    arcane: Int!
+    name: String!
     location: Bloodborne_Location!
-    quicksilverCost: Int!
-    damageType: Bloodborne_Element
     """
-    Arcane tools may have unique properties or uses
+    This field identifies the nearest lamp to the boss's fog wall,
+    the quickest route to the boss from the Hunter's Dream.
     """
-    special: String
-    requiresDLC: Boolean!
+    quickestRoute: Bloodborne_Location
+    mandatory: Boolean!
+    isBeast: Boolean!
+    isKin: Boolean!
+    givesBadge: Bloodborne_Badge
+    givesAttire: Bloodborne_Attire
+    givesGesture: Bloodborne_Gesture
+    givesRune: Bloodborne_Rune
+    givesWeapon: Bloodborne_Weapon
+    givesKeyItem: Bloodborne_KeyItem
+    connectLootSource: Bloodborne_LootSource
     """
-    Notes may contain tips for finding or obtaining item, or warnings about progression
-    """
-    notes: String
-}
-
-"""
-Completeness of a hunter's wardrobe affords the greatest aethetic flexibility.
-"""
-type Bloodborne_Attire implements Node {
-    id: ID!
-    name: String! @unique
-    slot: Bloodborne_AttireSlot!
-    set: Bloodborne_AttireSet
-    pickUp: Bloodborne_Location
-    droppedBy: Bloodborne_LootSource
-    requiresDLC: Boolean!
-}
-
-"""
-There is no mechanical connection among pieces of a set of attire.
-This type exists only as a checklist, as some sets are acquired piecemeal.
-"""
-type Bloodborne_AttireSet implements Node {
-    id: ID!
-    name: String! @unique
-    badge: Bloodborne_Badge
-    requiresKill: Bloodborne_LootSource
-    pieces: [Bloodborne_Attire!]! @relation(path: "Bloodborne_AttireSet=set.Bloodborne_Attire")
-}
-
-"""
-There are four slots for attire: "Headwear", "Garb", "Gloves", and "Trousers".
-"""
-type Bloodborne_AttireSlot implements Node {
-    id: ID!
-    slot: String! @unique
-}
-
-"""
-Caryll runes for use with the Workshop Rune Tool.
-"""
-type Bloodborne_Rune implements Node {
-    id: ID!
-    name: String! @unique
-    isCovenant: Boolean
-    tier: Int
-    effect: String!
-    pickUp: Bloodborne_Location
-    source: Bloodborne_LootSource
-    requiresDLC: Boolean!
-    """
-    Notes may contain tips for finding or obtaining item, or warnings about progression
+    Notes may contain warnings about boss types or progression.
     """
     notes: String
 }
 
+"""
+Any character encountered by the player during the night of the hunt. May be helpful or hostile.
+"""
+type Bloodborne_Character implements Node {
+    id: ID!
+    name: String! @unique
+    requiresDLC: Boolean!
+    encounters: [Bloodborne_CharacterEncounter!]! @relation(path: "Bloodborne_Character=interactWith.Bloodborne_CharacterEncounter")
+}
+
+"""
+Must be connected to either a single Character of identical name or each boss of
+identical name. Allows other types to designate either NPCs or bosses as being
+sources of loot. May be deprecated when unions are supported.
+"""
+type Bloodborne_LootSource implements Node {
+    id: ID!
+    name: String! @unique
+    connectCharacter: Bloodborne_Character @unique
+    connectBoss: [Bloodborne_Boss!]! @relation(path: "Bloodborne_LootSource=connectLootSource.Bloodborne_Boss")
+}
+
+# CATEGORY: WORLD
+# these Types are places and events that facilitate the acquisition of ITEM Types
+
+"""
+A set of information about where and when an NPC can be found, as well as what may be acquired.
+"""
+type Bloodborne_CharacterEncounter implements Node {
+    id: ID!
+    """
+    For consistency, designation should be Firstname EncounterNumber.
+    For example, "Eileen 1", "Eileen 2", and so on.
+    Character corpses count as encounters if lootable, but summons do not.
+    """
+    designation: String! @unique
+    name: String @unique
+    location: Bloodborne_Location!
+    interactWith: Bloodborne_Character
+    action: Bloodborne_Action
+    givesBadge: Bloodborne_Badge
+    givesAttire: Bloodborne_Attire
+    givesGesture: Bloodborne_Gesture
+    givesRune: Bloodborne_Rune
+    givesKeyItem: Bloodborne_KeyItem
+    requiresDeathOf: Bloodborne_LootSource
+    doNotKillThisYet: Bloodborne_LootSource
+    questStep: Bloodborne_QuestStep
+    """
+    Indicates whether or not the character ever appears again as an NPC (not summoned).
+    If not, it is probably safe to kill the character, although they may not have any loot left.
+    """
+    isLastEncounter: Boolean!
+    """
+    Notes may contain reminders for unique requirements of certain encounters
+    """
+    notes: String
+}
 
 """
 The name of a particular lamp as given in-game.
@@ -288,29 +278,55 @@ type Bloodborne_Headstone implements Node {
     lanterns: [Bloodborne_Location!] @relation(path: "Bloodborne_Headstone=headstone.Bloodborne_Location")
 }
 
+"""
+A discrete measurement of progress in a quest. There may be multiple Character Encounters per
+Quest Step, but no Quest Step will involve multiple Character Encounters with any one Character.
+"""
+type Bloodborne_QuestStep implements Node {
+    id: ID!
+    quest: Bloodborne_Quest!
+    step: Int!
+    location: Bloodborne_Location!
+    requiresDeathOf: Bloodborne_LootSource
+    doNotKillThisYet: Bloodborne_LootSource
+    terminalPhase: Bloodborne_Phase
+    encounters: [Bloodborne_CharacterEncounter!]! @relation(path: "Bloodborne_QuestStep=questStep.Bloodborne_CharacterEncounter")
+}
+
+# CATEGORY: MECHANIC
+# these Types offer no interaction to the player, but facilitate good organization of other Types
 
 """
-Required for purchasing certain weapons, attire, or other items.
-May be found, gifted, or looted from corpses.
+An action is any of four simple interactions with NPCs, bosses, or items.
 """
-type Bloodborne_Badge implements Node {
+type Bloodborne_Action implements Node {
     id: ID!
-    name: String! @unique
-    trickWeapons: [Bloodborne_Weapon!] @relation(path: "Bloodborne_Badge=badge.Bloodborne_Weapon")
-    offhandWeapons: [Bloodborne_Offhand!] @relation(path: "Bloodborne_Badge=badge.Bloodborne_Offhand")
-    pickUp: Bloodborne_Location
-    source: Bloodborne_LootSource
-    requiresDLC: Boolean!
+    """
+    An action should be "Talk" (for ally NPC), "Kill" (for hostile NPC/boss or exhausted NPC),
+    "Pick up" (for item on ground, on non-killable corpse, or in chest), or "Give"
+    (for already-acquired item desired by an NPC).
+    """
+    action: String!
 }
 
 """
-Any non-badge item required for a quest step or to acquire loot.
+There is no mechanical connection among pieces of a set of attire.
+This type exists only as a checklist, as some sets are acquired piecemeal.
 """
-type Bloodborne_KeyItem implements Node {
+type Bloodborne_AttireSet implements Node {
     id: ID!
     name: String! @unique
-    pickUp: Bloodborne_Location
-    source: Bloodborne_LootSource
+    badge: Bloodborne_Badge
+    requiresKill: Bloodborne_LootSource
+    pieces: [Bloodborne_Attire!]! @relation(path: "Bloodborne_AttireSet=set.Bloodborne_Attire")
+}
+
+"""
+There are four slots for attire: "Headwear", "Garb", "Gloves", and "Trousers".
+"""
+type Bloodborne_AttireSlot implements Node {
+    id: ID!
+    slot: String! @unique
 }
 
 """
@@ -328,60 +344,20 @@ type Bloodborne_Element implements Node {
 }
 
 """
-Most gestures exist only for entertainment, but all are included for the sake of completion.
+A unique combination of blood gem shapes, tied to a specific version of a specific weapon.
 """
-type Bloodborne_Gesture implements Node {
-    id: ID!
-    name: String! @unique
-    givenBy: Bloodborne_Character!
-}
-
-"""
-In this API, a quest is any sequence of actions required to acquire some item.
-This list attempts to comprehensively expose any missable actions,
-but excludes any sequence that is entirely mandatory.
-For example, player must kill Father Gascoigne before killing Amelia to acquire Gold Pendant,
-but this sequence is impossible to miss during progression and is not included.
-"""
-type Bloodborne_Quest implements Node {
-    id: ID!
-    name: String! @unique
-    steps: [Bloodborne_QuestStep!] @relation(path: "Bloodborne_Quest=quest.Bloodborne_QuestStep")
-}
-
-"""
-A discrete measurement of progress in a quest. Defined by the action required to progress the quest.
-Therefore, encounters which are exposed by quest progression but are not required to further
-quest progression are not connected to the node at this time.
-"""
-type Bloodborne_QuestStep implements Node {
-    id: ID!
-    quest: Bloodborne_Quest!
-    step: Int!
-    location: Bloodborne_Location!
-    encounter: Bloodborne_CharacterEncounter
-    action: Bloodborne_Action
-    target: Bloodborne_Character
-    requiredItem: String
-    getBadge: Bloodborne_Badge
-    getGesture: Bloodborne_Gesture
-    getRune: Bloodborne_Rune
-    requiresDeathOf: Bloodborne_LootSource
-    doNotKillThisYet: Bloodborne_LootSource
-    terminalPhase: Bloodborne_Phase
-}
-
-"""
-An action is any of four simple interactions with NPCs, bosses, or items.
-"""
-type Bloodborne_Action implements Node {
+type Bloodborne_Imprint implements Node {
     id: ID!
     """
-    An action should be "Talk" (for ally NPC), "Kill" (for hostile NPC/boss or exhausted NPC),
-    "Pick up" (for item on ground, on non-killable corpse, or in chest), or "Give"
-    (for already-acquired item desired by an NPC).
+    This field exists for visual sorting in the database and should not be used in queries.
+    The format is Version Weapon (for example, Uncanny Kos Parasite).
     """
-    action: String!
+    name: String! @unique
+    weapon: Bloodborne_Weapon!
+    version: Bloodborne_WeaponVersion!
+    shape1: Bloodborne_Shape!
+    shape2: Bloodborne_Shape!
+    shape3: Bloodborne_Shape!
 }
 
 """
@@ -393,4 +369,36 @@ type Bloodborne_Phase implements Node {
     id: ID!
     name: String!
     terminatesQuestSteps: [Bloodborne_QuestStep!]! @relation(path: "Bloodborne_Phase=terminalPhase.Bloodborne_QuestStep")
+}
+
+"""
+In this API, a quest is any sequence of actions required to acquire some item.
+This list attempts to comprehensively expose any missable actions,
+but excludes any sequence that is entirely mandatory.
+For example, player must kill Father Gascoigne before killing Amelia to acquire Gold Pendant,
+but neither step is possible to miss during progression.
+"""
+type Bloodborne_Quest implements Node {
+    id: ID!
+    name: String! @unique
+    steps: [Bloodborne_QuestStep!] @relation(path: "Bloodborne_Quest=quest.Bloodborne_QuestStep")
+}
+
+"""
+The shape of a gem determines which weapons it can be used in and influences its properties.
+"""
+type Bloodborne_Shape implements Node {
+    id: ID!
+    """
+    Only gems of shape 'Triangle', 'Waning', 'Circle', or 'Droplet' are recorded.
+    """
+    shape: String! @unique
+}
+
+"""
+All trick weapons are "Normal", "Lost", or "Uncanny".
+"""
+type Bloodborne_WeaponVersion implements Node {
+    id: ID!
+    name: String! @unique
 }
