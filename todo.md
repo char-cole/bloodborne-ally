@@ -16,6 +16,7 @@
 76/76   Location
 16/16   Headstone
 11/11   Badge
+0/x     Key Item
 4/4     Element
 5/23    Gesture
 1/x     Quest

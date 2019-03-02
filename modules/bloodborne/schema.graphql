@@ -335,6 +335,16 @@ type Bloodborne_Badge implements Node {
 }
 
 """
+Any non-badge item required for a quest step or to acquire loot.
+"""
+type Bloodborne_KeyItem implements Node {
+    id: ID!
+    name: String! @unique
+    pickUp: Bloodborne_Location
+    source: Bloodborne_LootSource
+}
+
+"""
 Some trick weapons, all off-hand weapons, and most tools deal "elemental" (non-physical) damage.
 Trick weapons that deal elemental damage cannot have their damage type modified by
 items such as Fire Paper.
