@@ -196,7 +196,7 @@ type Bloodborne_Character implements Node {
     id: ID!
     name: String! @unique
     requiresDLC: Boolean!
-    encounters: [Bloodborne_CharacterEncounter!]! @relation(path: "Bloodborne_Character=interactWith.Bloodborne_CharacterEncounter")
+    encounters: [Bloodborne_Encounter!]! @relation(path: "Bloodborne_Character=interactWith.Bloodborne_Encounter")
 }
 
 """
@@ -217,30 +217,31 @@ type Bloodborne_LootSource implements Node {
 """
 A set of information about where and when an NPC can be found, as well as what may be acquired.
 """
-type Bloodborne_CharacterEncounter implements Node {
+type Bloodborne_Encounter implements Node {
     id: ID!
     """
-    For consistency, name should be "Firstname EncounterNumber".
-    For example, "Eileen 1", "Eileen 2", and so on.
-    Character corpses count as encounters if lootable, but summons do not.
+    Names should be descriptive, but very brief.
     """
     name: String! @unique
+    quest: Bloodborne_Quest!
+    step: Int!
     location: Bloodborne_Location!
+    firstAvailablePhase: Bloodborne_Phase!
+    killThisFirst: Bloodborne_LootSource
+    terminalPhase: Bloodborne_Phase
+    doNotKillThisYet: Bloodborne_LootSource
     interactWith: Bloodborne_Character
-    action: Bloodborne_Action
+    pickUp: Bloodborne_KeyItem
     givesBadge: Bloodborne_Badge
     givesAttire: Bloodborne_Attire
     givesGesture: Bloodborne_Gesture
     givesRune: Bloodborne_Rune
     givesKeyItem: Bloodborne_KeyItem
-    requiresDeathOf: Bloodborne_LootSource
-    doNotKillThisYet: Bloodborne_LootSource
-    questStep: Bloodborne_QuestStep
     """
-    Indicates whether or not the character ever appears again as an NPC (not summoned).
-    If not, it is probably safe to kill the character, although they may not have any loot left.
+    If "True", killing this character after this encounter will not disrupt any ongoing quests.
+    Should be "True" if character must be killed.
     """
-    isLastEncounter: Boolean!
+    safeToKill: Boolean
     """
     Notes may contain reminders for unique requirements of certain encounters
     """
@@ -279,21 +280,6 @@ type Bloodborne_Headstone implements Node {
 
 # CATEGORY: MECHANIC
 # these Types offer no interaction to the player, but facilitate good organization of other Types
-
-"""
-An action is any of four simple interactions with NPCs, bosses, or items.
-"""
-type Bloodborne_Action implements Node {
-    id: ID!
-    """
-    "Talk or Examine" is used on friendly NPCs or objects in the world.
-    "Kill" is used on useless or hostile NPCs.
-    "Pick Up" is used on items on corpses, on the ground, or in chests.
-    "Give" is used on NPCs that desire a certain item, and is done through Talking.
-    "Make Contact" is used only once, on a location.
-    """
-    action: String!
-}
 
 """
 There is no mechanical connection among pieces of a set of attire.
@@ -354,7 +340,7 @@ The phases are "Day", "Night", "Blood Moon", and "End of the Dream".
 type Bloodborne_Phase implements Node {
     id: ID!
     name: String!
-    terminatesQuestSteps: [Bloodborne_QuestStep!]! @relation(path: "Bloodborne_Phase=terminalPhase.Bloodborne_QuestStep")
+    blocksEncounters: [Bloodborne_Encounter!]! @relation(path: "Bloodborne_Phase=terminalPhase.Bloodborne_Encounter")
 }
 
 """
@@ -371,28 +357,7 @@ type Bloodborne_Quest implements Node {
     loot, the hierarchy is Weapon, Offhand, Badge, Rune, Key Item, Attire [Set], Gesture.
     """
     name: String! @unique
-    steps: [Bloodborne_QuestStep!] @relation(path: "Bloodborne_Quest=quest.Bloodborne_QuestStep")
-}
-
-"""
-A discrete measurement of progress in a quest. There may be multiple Character Encounters per
-Quest Step, but no Quest Step will involve multiple Character Encounters with any one Character.
-"""
-type Bloodborne_QuestStep implements Node {
-    id: ID!
-    """
-    Name should be an extremely brief descriptor of the Character Encounter involved,
-    perhaps giving specific location information, followed by "(step)".
-    """
-    name: String @unique
-    quest: Bloodborne_Quest!
-    step: Int!
-    location: Bloodborne_Location!
-    requiresDeathOf: Bloodborne_LootSource
-    doNotKillThisYet: Bloodborne_LootSource
-    requiredPhase: Bloodborne_Phase
-    terminalPhase: Bloodborne_Phase
-    encounters: [Bloodborne_CharacterEncounter!]! @relation(path: "Bloodborne_QuestStep=questStep.Bloodborne_CharacterEncounter")
+    encounters: [Bloodborne_Encounter!]! @relation(path: "Bloodborne_Quest=quest.Bloodborne_Encounter")
 }
 
 """
