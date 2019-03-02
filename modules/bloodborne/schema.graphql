@@ -244,7 +244,7 @@ Caryll runes for use with the Workshop Rune Tool.
 """
 type Bloodborne_Rune implements Node {
     id: ID!
-    name: String!
+    name: String! @unique
     isCovenant: Boolean
     tier: Int
     effect: String!
