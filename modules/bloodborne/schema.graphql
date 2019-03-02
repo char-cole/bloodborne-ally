@@ -220,12 +220,11 @@ A set of information about where and when an NPC can be found, as well as what m
 type Bloodborne_CharacterEncounter implements Node {
     id: ID!
     """
-    For consistency, designation should be Firstname EncounterNumber.
+    For consistency, name should be "Firstname EncounterNumber".
     For example, "Eileen 1", "Eileen 2", and so on.
     Character corpses count as encounters if lootable, but summons do not.
     """
-    designation: String! @unique
-    name: String @unique
+    name: String! @unique
     location: Bloodborne_Location!
     interactWith: Bloodborne_Character
     action: Bloodborne_Action
@@ -278,21 +277,6 @@ type Bloodborne_Headstone implements Node {
     lanterns: [Bloodborne_Location!] @relation(path: "Bloodborne_Headstone=headstone.Bloodborne_Location")
 }
 
-"""
-A discrete measurement of progress in a quest. There may be multiple Character Encounters per
-Quest Step, but no Quest Step will involve multiple Character Encounters with any one Character.
-"""
-type Bloodborne_QuestStep implements Node {
-    id: ID!
-    quest: Bloodborne_Quest!
-    step: Int!
-    location: Bloodborne_Location!
-    requiresDeathOf: Bloodborne_LootSource
-    doNotKillThisYet: Bloodborne_LootSource
-    terminalPhase: Bloodborne_Phase
-    encounters: [Bloodborne_CharacterEncounter!]! @relation(path: "Bloodborne_QuestStep=questStep.Bloodborne_CharacterEncounter")
-}
-
 # CATEGORY: MECHANIC
 # these Types offer no interaction to the player, but facilitate good organization of other Types
 
@@ -302,9 +286,11 @@ An action is any of four simple interactions with NPCs, bosses, or items.
 type Bloodborne_Action implements Node {
     id: ID!
     """
-    An action should be "Talk" (for ally NPC), "Kill" (for hostile NPC/boss or exhausted NPC),
-    "Pick up" (for item on ground, on non-killable corpse, or in chest), or "Give"
-    (for already-acquired item desired by an NPC).
+    "Talk or Examine" is used on friendly NPCs or objects in the world.
+    "Kill" is used on useless or hostile NPCs.
+    "Pick Up" is used on items on corpses, on the ground, or in chests.
+    "Give" is used on NPCs that desire a certain item, and is done through Talking.
+    "Make Contact" is used only once, on a location.
     """
     action: String!
 }
@@ -380,8 +366,33 @@ but neither step is possible to miss during progression.
 """
 type Bloodborne_Quest implements Node {
     id: ID!
+    """
+    Quests are strictly named after their ultimate loot. In the case of multiple ITEMS as ultimate
+    loot, the hierarchy is Weapon, Offhand, Badge, Rune, Key Item, Attire [Set], Gesture.
+    """
     name: String! @unique
     steps: [Bloodborne_QuestStep!] @relation(path: "Bloodborne_Quest=quest.Bloodborne_QuestStep")
+}
+
+"""
+A discrete measurement of progress in a quest. There may be multiple Character Encounters per
+Quest Step, but no Quest Step will involve multiple Character Encounters with any one Character.
+"""
+type Bloodborne_QuestStep implements Node {
+    id: ID!
+    """
+    Name should be an extremely brief descriptor of the Character Encounter involved,
+    perhaps giving specific location information, followed by "(step)".
+    """
+    name: String @unique
+    quest: Bloodborne_Quest!
+    step: Int!
+    location: Bloodborne_Location!
+    requiresDeathOf: Bloodborne_LootSource
+    doNotKillThisYet: Bloodborne_LootSource
+    requiredPhase: Bloodborne_Phase
+    terminalPhase: Bloodborne_Phase
+    encounters: [Bloodborne_CharacterEncounter!]! @relation(path: "Bloodborne_QuestStep=questStep.Bloodborne_CharacterEncounter")
 }
 
 """
