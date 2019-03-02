@@ -5,7 +5,6 @@ type Bloodborne_Character implements Node {
     id: ID!
     name: String! @unique
     encounters: [Bloodborne_CharacterEncounter!] @relation(path: "Bloodborne_Character=interactWith.Bloodborne_CharacterEncounter")
-    # sourceOfItems: [Bloodborne_Item!]! @relation(path: "Bloodborne_Character=source.Bloodborne_Item")
     requiresDLC: Boolean!
 }
 
@@ -27,7 +26,7 @@ type Bloodborne_CharacterEncounter implements Node {
     givesAttire: Bloodborne_Attire
     givesGesture: Bloodborne_Gesture
     givesRune: Bloodborne_Rune
-    # givesKeyItem: Bloodborne_KeyItem
+    givesKeyItem: Bloodborne_KeyItem
     requiresDeathOf: Bloodborne_LootSource
     doNotKillThisYet: Bloodborne_LootSource
     """
@@ -56,25 +55,18 @@ type Bloodborne_Boss implements Node {
     mandatory: Boolean!
     isBeast: Boolean!
     isKin: Boolean!
-    # dropsLoot: Bloodborne_LootUnion
     givesBadge: Bloodborne_Badge
     givesAttire: Bloodborne_Attire
     givesGesture: Bloodborne_Gesture
     givesRune: Bloodborne_Rune
     givesWeapon: Bloodborne_Weapon
+    givesKeyItem: Bloodborne_KeyItem
     connectLootSource: Bloodborne_LootSource
-    # givesKeyItem: Bloodborne_KeyItem
     """
     Notes may contain warnings about boss types or progression.
     """
     notes: String
 }
-
-# """
-# As certain loot types (ie badges) may be acquired from both NPCs and bosses, these types should
-# be searchable in tandem.
-# """
-# union Bloodborne_LootableCorpse = Bloodborne_Character | Bloodborne_Boss
 
 """
 Must be connected to either a single Character of identical name or each boss of
@@ -194,25 +186,6 @@ type Bloodborne_Shape implements Node {
 }
 
 """
-A static gem found in the world or non-root chalice dungeons.
-"""
-type Bloodborne_Gem implements Node {
-    id: ID!
-    name: String!
-    """
-    Only gems of shape 'Triangle', 'Waning', 'Circle', or 'Droplet' are recorded
-    """
-    shape: Bloodborne_Shape!
-    rating: Int!
-    effect1: String!
-    effect2: String
-    effect3: String
-    location: Bloodborne_Location
-    requiresDLC: Boolean!
-}
-
-
-"""
 An arcane hunter tool used in the hunt.
 """
 type Bloodborne_HunterTool implements Node {
@@ -221,8 +194,6 @@ type Bloodborne_HunterTool implements Node {
     arcane: Int!
     location: Bloodborne_Location!
     quicksilverCost: Int!
-    # DO NOT create field 'element'
-    # element: Bloodborne_Element
     damageType: Bloodborne_Element
     """
     Arcane tools may have unique properties or uses
@@ -278,7 +249,6 @@ type Bloodborne_Rune implements Node {
     tier: Int
     effect: String!
     pickUp: Bloodborne_Location
-    # receivedFrom: Bloodborne_LootableCorpse
     source: Bloodborne_LootSource
     requiresDLC: Boolean!
     """
@@ -330,7 +300,6 @@ type Bloodborne_Badge implements Node {
     offhandWeapons: [Bloodborne_Offhand!] @relation(path: "Bloodborne_Badge=badge.Bloodborne_Offhand")
     pickUp: Bloodborne_Location
     source: Bloodborne_LootSource
-    # droppedBy: Bloodborne_LootableCorpse
     requiresDLC: Boolean!
 }
 
@@ -391,11 +360,9 @@ type Bloodborne_QuestStep implements Node {
     step: Int!
     location: Bloodborne_Location!
     encounter: Bloodborne_CharacterEncounter
-    # interactWith: Bloodborne_LootableCorpse
     action: Bloodborne_Action
     target: Bloodborne_Character
     requiredItem: String
-    # getAttire: Bloodborne_AttireUnion
     getBadge: Bloodborne_Badge
     getGesture: Bloodborne_Gesture
     getRune: Bloodborne_Rune

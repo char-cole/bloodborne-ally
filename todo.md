@@ -1,7 +1,7 @@
-13/26   Character
+24/24   Character
 7/x     Character Encounter
 53/53   Boss
-51/63   Loot Source
+62/62   Loot Source
 26/26   Weapon
 16/16   Offhand
 78/78   Imprint
@@ -12,7 +12,7 @@
 34/159  Attire
 34/34   Attire Set
 4/4     Attire Slot
-5/70    Rune
+35/45   Rune
 76/76   Location
 16/16   Headstone
 11/11   Badge
