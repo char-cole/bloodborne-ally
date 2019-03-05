@@ -67,6 +67,7 @@ type Bloodborne_KeyItem implements Node {
     name: String! @unique
     pickUp: Bloodborne_Location
     source: Bloodborne_LootSource
+    isChalice: Boolean
 }
 
 """
@@ -178,7 +179,6 @@ type Bloodborne_Boss implements Node {
     isKin: Boolean!
     givesBadge: Bloodborne_Badge
     givesAttire: Bloodborne_Attire
-    givesGesture: Bloodborne_Gesture
     givesRune: Bloodborne_Rune
     givesWeapon: Bloodborne_Weapon
     givesKeyItem: Bloodborne_KeyItem
@@ -196,7 +196,6 @@ type Bloodborne_Character implements Node {
     id: ID!
     name: String! @unique
     requiresDLC: Boolean!
-    encounters: [Bloodborne_Encounter!]! @relation(path: "Bloodborne_Character=interactWith.Bloodborne_Encounter")
 }
 
 """
@@ -227,9 +226,13 @@ type Bloodborne_Encounter implements Node {
     step: Int!
     location: Bloodborne_Location!
     firstAvailablePhase: Bloodborne_Phase!
-    killThisFirst: Bloodborne_LootSource
     terminalPhase: Bloodborne_Phase
-    doNotKillThisYet: Bloodborne_LootSource
+    availableAfter: String
+    """
+    Many despawn triggers are unverified. This API errs on the side of caution and displays the
+    earliest reported triggers.
+    """
+    likelyUnavailableAfter: String
     interactWith: Bloodborne_Character
     pickUp: Bloodborne_KeyItem
     givesBadge: Bloodborne_Badge
@@ -241,7 +244,7 @@ type Bloodborne_Encounter implements Node {
     If "True", killing this character after this encounter will not disrupt any ongoing quests.
     Should be "True" if character must be killed.
     """
-    safeToKill: Boolean
+    safeToKill: Boolean!
     """
     Notes may contain reminders for unique requirements of certain encounters
     """
@@ -353,8 +356,8 @@ but neither step is possible to miss during progression.
 type Bloodborne_Quest implements Node {
     id: ID!
     """
-    Quests are strictly named after their ultimate loot. In the case of multiple ITEMS as ultimate
-    loot, the hierarchy is Weapon, Offhand, Badge, Rune, Key Item, Attire [Set], Gesture.
+    Quests are generaly named for the character that starts them. Single-encounter, non-boss
+    enemies that drop important loot also count as quests.
     """
     name: String! @unique
     encounters: [Bloodborne_Encounter!]! @relation(path: "Bloodborne_Quest=quest.Bloodborne_Encounter")
