@@ -67,7 +67,7 @@ type Bloodborne_KeyItem implements Node {
     name: String! @unique
     pickUp: Bloodborne_Location
     source: Bloodborne_LootSource
-    isChalice: Boolean
+    isChalice: Boolean!
 }
 
 """
