@@ -9,7 +9,6 @@
 26/26   Weapon              -
 <!-- NPC -->
 53/53   Boss                -
-26/26   Character           Unknown
 62/62   Loot Source         -
 <!-- WORLD -->
 46/46   Encounter           Unkown
