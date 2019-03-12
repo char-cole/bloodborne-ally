@@ -35,7 +35,7 @@ Most gestures exist only for entertainment, but all are included for the sake of
 type Bloodborne_Gesture implements Node {
     id: ID!
     name: String! @unique
-    givenBy: Bloodborne_Character!
+    acquired: Bloodborne_Encounter @relation(path: "Bloodborne_Gesture=givesGesture.Bloodborne_Encounter")
 }
 
 """
@@ -190,23 +190,14 @@ type Bloodborne_Boss implements Node {
 }
 
 """
-Any character encountered by the player during the night of the hunt. May be helpful or hostile.
-"""
-type Bloodborne_Character implements Node {
-    id: ID!
-    name: String! @unique
-    requiresDLC: Boolean!
-}
-
-"""
-Must be connected to either a single Character of identical name or each boss of
-identical name. Allows other types to designate either NPCs or bosses as being
-sources of loot. May be deprecated when unions are supported.
+A type to unify all encounters and/or fights with characters or bosses of
+the same name. For example, each Undead Giant Boss is connected to the
+single Undead Giant Loot Source.
 """
 type Bloodborne_LootSource implements Node {
     id: ID!
     name: String! @unique
-    connectCharacter: Bloodborne_Character @unique
+    encounters: [Bloodborne_Encounter!]! @relation(path: "Bloodborne_LootSource=target.Bloodborne_Encounter")
     connectBoss: [Bloodborne_Boss!]! @relation(path: "Bloodborne_LootSource=connectLootSource.Bloodborne_Boss")
 }
 
@@ -214,7 +205,8 @@ type Bloodborne_LootSource implements Node {
 # these Types are places and events that facilitate the acquisition of ITEM Types
 
 """
-A set of information about where and when an NPC can be found, as well as what may be acquired.
+A set of information about where and when an NPC can be found,
+as well as what may be acquired.
 """
 type Bloodborne_Encounter implements Node {
     id: ID!
@@ -233,7 +225,7 @@ type Bloodborne_Encounter implements Node {
     earliest reported triggers.
     """
     likelyUnavailableAfter: String
-    interactWith: Bloodborne_Character
+    target: Bloodborne_LootSource
     pickUp: Bloodborne_KeyItem
     givesBadge: Bloodborne_Badge
     givesAttire: Bloodborne_Attire
