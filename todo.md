@@ -1,5 +1,5 @@
 <!-- ITEM -->
-36/159  Attire              Garb, Gloves, Trousers
+39/159  Attire              Garb, Gloves, Trousers
 11/11   Badge               -
 16/16   Gesture             -
 12/12   Hunter Tool         -
@@ -20,6 +20,6 @@
 04/04   Element             -
 78/78   Imprint             -
 04/04   Phase               -
-16/16   Quest               Unknown
+18/18   Quest               Unknown
 05/05   Shape               -
 03/03   Weapon Version      -
