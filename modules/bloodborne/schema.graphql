@@ -11,7 +11,7 @@ type Bloodborne_Attire implements Node {
     slot: Bloodborne_AttireSlot!
     set: Bloodborne_AttireSet
     pickUp: Bloodborne_Location
-    droppedByBoss: Bloodborne_Boss @relation(path: "Bloodborne_Attire=dropsAttire.Bloodborne_Boss")
+    droppedByBoss: Bloodborne_Boss @relation(path: "Bloodborne_Attire=givesAttire.Bloodborne_Boss")
     droppedByNPC: Bloodborne_Encounter @relation(path: "Bloodborne_Attire=dropsAttire.Bloodborne_Encounter")
     rewardFrom: Bloodborne_Encounter @relation(path: "Bloodborne_Attire=givesAttire.Bloodborne_Encounter")
     requiresDLC: Boolean!
@@ -27,7 +27,7 @@ type Bloodborne_Badge implements Node {
     trickWeapons: [Bloodborne_Weapon!] @relation(path: "Bloodborne_Badge=badge.Bloodborne_Weapon")
     offhandWeapons: [Bloodborne_Offhand!] @relation(path: "Bloodborne_Badge=badge.Bloodborne_Offhand")
     pickUp: Bloodborne_Location
-    droppedByBoss: Bloodborne_Boss @relation(path: "Bloodborne_Badge=dropsBadge.Bloodborne_Boss")
+    droppedByBoss: Bloodborne_Boss @relation(path: "Bloodborne_Badge=givesBadge.Bloodborne_Boss")
     droppedByNPC: Bloodborne_Encounter @relation(path: "Bloodborne_Badge=dropsBadge.Bloodborne_Encounter")
     rewardFrom: Bloodborne_Encounter @relation(path: "Bloodborne_Badge=givesBadge.Bloodborne_Encounter")
     requiresDLC: Boolean!
@@ -71,7 +71,7 @@ type Bloodborne_KeyItem implements Node {
     id: ID!
     name: String! @unique
     pickUp: Bloodborne_Location
-    droppedByBoss: Bloodborne_Boss @relation(path: "Bloodborne_KeyItem=dropsKeyItem.Bloodborne_Boss")
+    droppedByBoss: Bloodborne_Boss @relation(path: "Bloodborne_KeyItem=givesKeyItem.Bloodborne_Boss")
     droppedByNPC: Bloodborne_Encounter @relation(path: "Bloodborne_KeyItem=dropsKeyItem.Bloodborne_Encounter")
     rewardFrom: Bloodborne_Encounter @relation(path: "Bloodborne_KeyItem=givesKeyItem.Bloodborne_Encounter")
     isChalice: Boolean!
@@ -117,7 +117,7 @@ type Bloodborne_Rune implements Node {
     tier: Int
     effect: String!
     pickUp: Bloodborne_Location
-    droppedByBoss: Bloodborne_Boss @relation(path: "Bloodborne_Rune=dropsRune.Bloodborne_Boss")
+    droppedByBoss: Bloodborne_Boss @relation(path: "Bloodborne_Rune=givesRune.Bloodborne_Boss")
     droppedByNPC: Bloodborne_Encounter @relation(path: "Bloodborne_Rune=dropsRune.Bloodborne_Encounter")
     rewardFrom: Bloodborne_Encounter @relation(path: "Bloodborne_Rune=givesRune.Bloodborne_Encounter")
     requiresDLC: Boolean!
@@ -140,7 +140,7 @@ type Bloodborne_Weapon implements Node {
     trickedAllowsOffhand: Boolean!
     location: Bloodborne_Location
     badge: Bloodborne_Badge
-    droppedByBoss: Bloodborne_Boss @relation(path: "Bloodborne_Weapon=dropsWeapon.Bloodborne_Boss")
+    droppedByBoss: Bloodborne_Boss @relation(path: "Bloodborne_Weapon=givesWeapon.Bloodborne_Boss")
     droppedByNPC: Bloodborne_Encounter @relation(path: "Bloodborne_Weapon=dropsWeapon.Bloodborne_Encounter")
     rewardFrom: Bloodborne_Encounter @relation(path: "Bloodborne_Weapon=givesWeapon.Bloodborne_Encounter")
     """
@@ -194,11 +194,6 @@ type Bloodborne_Boss implements Node {
     givesRune: Bloodborne_Rune
     givesWeapon: Bloodborne_Weapon
     givesKeyItem: Bloodborne_KeyItem
-    dropsBadge: Bloodborne_Badge
-    dropsAttire: Bloodborne_Attire
-    dropsRune: Bloodborne_Rune
-    dropsWeapon: Bloodborne_Weapon
-    dropsKeyItem: Bloodborne_KeyItem
     connectLootSource: Bloodborne_LootSource
     """
     Notes may contain warnings about boss types or progression.
