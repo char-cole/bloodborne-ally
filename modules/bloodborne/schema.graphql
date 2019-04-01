@@ -3,7 +3,7 @@
 # these Types are loot, and facilitating acquisition of them is the purpose of this API.
 
 """
-Completeness of a hunter's wardrobe affords the greatest aethetic flexibility.
+Each attire piece has defensive stats, but the primary purpose is aethetics.
 """
 type Bloodborne_Attire implements Node {
     id: ID!
@@ -12,6 +12,9 @@ type Bloodborne_Attire implements Node {
     set: Bloodborne_AttireSet
     pickUp: Bloodborne_Location
     droppedByBoss: Bloodborne_Boss @relation(path: "Bloodborne_Attire=givesAttire.Bloodborne_Boss")
+    """
+    This field is being replaced by rewardFrom to better indicate that the related type is an Encounter.
+    """
     droppedByNPC: Bloodborne_Encounter @relation(path: "Bloodborne_Attire=dropsAttire.Bloodborne_Encounter")
     rewardFrom: Bloodborne_Encounter @relation(path: "Bloodborne_Attire=givesAttire.Bloodborne_Encounter")
     requiresDLC: Boolean!
@@ -28,6 +31,9 @@ type Bloodborne_Badge implements Node {
     offhandWeapons: [Bloodborne_Offhand!] @relation(path: "Bloodborne_Badge=badge.Bloodborne_Offhand")
     pickUp: Bloodborne_Location
     droppedByBoss: Bloodborne_Boss @relation(path: "Bloodborne_Badge=givesBadge.Bloodborne_Boss")
+    """
+    This field is being replaced by rewardFrom to better indicate that the related type is an Encounter.
+    """
     droppedByNPC: Bloodborne_Encounter @relation(path: "Bloodborne_Badge=dropsBadge.Bloodborne_Encounter")
     rewardFrom: Bloodborne_Encounter @relation(path: "Bloodborne_Badge=givesBadge.Bloodborne_Encounter")
     requiresDLC: Boolean!
@@ -50,7 +56,11 @@ type Bloodborne_HunterTool implements Node {
     name: String! @unique
     arcane: Int!
     location: Bloodborne_Location
+    """
+    This field is being replaced by rewardFrom to better indicate that the related type is an Encounter.
+    """
     droppedByNPC: Bloodborne_Encounter @relation(path: "Bloodborne_HunterTool=dropsTool.Bloodborne_Encounter")
+    rewardFrom: Bloodborne_Encounter! @relation(path: "Bloodborne_HunterTool=dropsTool.Bloodborne_Encounter")
     quicksilverCost: Int!
     damageType: Bloodborne_Element
     """
@@ -72,6 +82,9 @@ type Bloodborne_KeyItem implements Node {
     name: String! @unique
     pickUp: Bloodborne_Location
     droppedByBoss: Bloodborne_Boss @relation(path: "Bloodborne_KeyItem=givesKeyItem.Bloodborne_Boss")
+    """
+    This field is being replaced by rewardFrom to better indicate that the related type is an Encounter.
+    """
     droppedByNPC: Bloodborne_Encounter @relation(path: "Bloodborne_KeyItem=dropsKeyItem.Bloodborne_Encounter")
     rewardFrom: Bloodborne_Encounter @relation(path: "Bloodborne_KeyItem=givesKeyItem.Bloodborne_Encounter")
     isChalice: Boolean!
@@ -118,6 +131,9 @@ type Bloodborne_Rune implements Node {
     effect: String!
     pickUp: Bloodborne_Location
     droppedByBoss: Bloodborne_Boss @relation(path: "Bloodborne_Rune=givesRune.Bloodborne_Boss")
+    """
+    This field is being replaced by rewardFrom to better indicate that the related type is an Encounter.
+    """
     droppedByNPC: Bloodborne_Encounter @relation(path: "Bloodborne_Rune=dropsRune.Bloodborne_Encounter")
     rewardFrom: Bloodborne_Encounter @relation(path: "Bloodborne_Rune=givesRune.Bloodborne_Encounter")
     requiresDLC: Boolean!
@@ -141,6 +157,9 @@ type Bloodborne_Weapon implements Node {
     location: Bloodborne_Location
     badge: Bloodborne_Badge
     droppedByBoss: Bloodborne_Boss @relation(path: "Bloodborne_Weapon=givesWeapon.Bloodborne_Boss")
+    """
+    This field is being replaced by rewardFrom to better indicate that the related type is an Encounter.
+    """
     droppedByNPC: Bloodborne_Encounter @relation(path: "Bloodborne_Weapon=dropsWeapon.Bloodborne_Encounter")
     rewardFrom: Bloodborne_Encounter @relation(path: "Bloodborne_Weapon=givesWeapon.Bloodborne_Encounter")
     """
@@ -270,11 +289,6 @@ type Bloodborne_Location implements Node {
     name: String! @unique
     headstone: Bloodborne_Headstone!
     boss: [Bloodborne_Boss!]! @relation(path: "Bloodborne_Location=location.Bloodborne_Boss")
-    """
-    Most locations can only be accessed after certain events.
-    This field denotes the earliest possible route to the lantern.
-    """
-    unlock: String
     """
     Notes may contain tips for finding or obtaining item, or warnings about progression
     """
