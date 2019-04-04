@@ -498,7 +498,7 @@ The phases are "Day", "Night", "Blood Moon", and "End of the Dream".
 """
 type Bloodborne_Phase implements Node {
     id: ID!
-    name: String!
+    name: String! @unique
     """
     An array of Encounters that become unavailable for the rest of the game at the start of this
     moon phase.
