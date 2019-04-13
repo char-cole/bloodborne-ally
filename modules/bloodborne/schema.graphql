@@ -268,7 +268,7 @@ this Type. The Loot Source type is used to relate Bosses of the same name.
 """
 type Bloodborne_Boss implements Node {
     id: ID!
-    name: String!
+    name: String! @unique
     location: Bloodborne_Location!
     """
     This field identifies the nearest lamp to the boss's fog wall,
@@ -516,7 +516,7 @@ but neither step is possible to miss during progression, so this sequence is not
 type Bloodborne_Quest implements Node {
     id: ID!
     """
-    Quests are generaly named for the character that starts them. Whenever possible, Encounters
+    Quests are generally named for the character that starts them. Whenever possible, Encounters
     are grouped into Quests.
     """
     name: String! @unique
